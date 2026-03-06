@@ -1,102 +1,134 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, CheckCircle, HelpCircle, Play, Info, Award, LineChart, CheckCircle2, XCircle, Lightbulb, Maximize, Search, Settings } from 'lucide-react';
+import { ArrowRight, CheckCircle, HelpCircle, Play, Info, Award, CheckCircle2, XCircle, AlertTriangle, GitMerge, RotateCcw, GitBranch, Maximize } from 'lucide-react';
 
-const linearProgramData = [
+// Dữ liệu Chương trình phân nhánh (Branched Programming)
+const branchedProgramData = [
   {
     id: 1,
-    title: "Liều 1: Phân tích bài toán thực tế",
-    info: "Bác thợ mộc có một tấm bìa hình vuông cạnh 12 dm. Bác muốn cắt bỏ 4 hình vuông nhỏ ở 4 góc (mỗi cạnh là x dm) rồi gập các mép lên để tạo thành một chiếc hộp không nắp. Mục tiêu: Tìm x để hộp có thể tích lớn nhất.",
-    question: "Kích thước đáy của chiếc hộp sau khi gập lên sẽ là một hình vuông có cạnh bằng bao nhiêu?",
+    type: 'question',
+    isRemedial: false,
+    title: "Liều 1: Nhận diện tỉ trọng",
+    info: "Một nhà máy sản xuất điện thoại có hai dây chuyền: Máy I và Máy II. Trong đó, Máy I đảm nhận 60% tổng sản lượng của nhà máy, phần còn lại do Máy II sản xuất. Ta lấy ngẫu nhiên 1 chiếc điện thoại từ kho.",
+    question: "Xác suất để chiếc điện thoại vừa lấy ra là do Máy I sản xuất bằng bao nhiêu?",
     inputType: "mcq",
-    options: ["12 - x", "12 - 2x"],
-    correctAnswer: "12 - 2x",
-    hint: "Hãy tưởng tượng bạn dùng kéo cắt đi 2 đoạn có độ dài x ở 2 đầu trái và phải của cạnh 12dm. Chiều dài phần ở giữa còn lại là bao nhiêu?",
-    successFeedback: "Chính xác! Cạnh đáy bị cắt 2 đầu nên chiều dài còn lại là 12 - 2x.",
-    visualType: "blueprint"
+    options: ["0.4", "0.6", "0.06", "60"],
+    correctAnswer: "0.6",
+    correctFeedback: "Chính xác! 60% tương đương với xác suất 0.6.",
+    incorrectFeedback: "Chưa đúng rồi! Hệ thống sẽ chuyển bạn sang liều phụ đạo để ôn lại cách chuyển đổi nhé.",
+    correctNext: 3,   
+    incorrectNext: 2, 
+    visualType: "factory-split"
   },
   {
     id: 2,
-    title: "Liều 2: Thiết lập hàm mục tiêu",
-    info: "Sau khi gập, chiếc hộp có đáy là hình vuông cạnh (12 - 2x) và chiều cao chính là phần bị gập lên, tức là x. Thể tích hộp chữ nhật được tính bằng: V = diện tích đáy × chiều cao.",
-    question: "Hàm số tính Thể tích V(x) của chiếc hộp này là:",
-    inputType: "mcq",
-    options: ["V(x) = x(12 - 2x)", "V(x) = x(12 - 2x)²"],
-    correctAnswer: "V(x) = x(12 - 2x)²",
-    hint: "Đáy của hộp là một hình vuông cạnh (12 - 2x). Diện tích của hình vuông được tính bằng công thức: Cạnh nhân Cạnh (hoặc Cạnh bình phương).",
-    successFeedback: "Chuẩn luôn! Ta có hàm mục tiêu V(x) = x(12 - 2x)².",
-    visualType: "function-machine"
+    type: 'remedial',
+    isRemedial: true,
+    title: "Góc phụ đạo 1: Hiểu về xác suất %",
+    info: "Bạn đã nhầm lẫn khi chuyển đổi phần trăm. Trong toán học, 'phần trăm' (%) nghĩa là chia cho 100. \n\nSản lượng của Máy I là 60%. Khi quy đổi ra xác suất (thang đo từ 0 đến 1), ta lấy: 60 ÷ 100 = 0.6. \nTương tự, Máy II sản xuất 40% (vì 100% - 60% = 40%), nên xác suất của Máy II là 0.4.",
+    question: "Hãy ghi nhớ: P(Máy I) = 0.6 và P(Máy II) = 0.4. Nhấn nút bên dưới để quay lại mạch kiến thức chính.",
+    correctNext: 3, 
+    visualType: "percent-conversion"
   },
   {
     id: 3,
-    title: "Liều 3: Điều kiện thực tế (tập xác định)",
-    info: "Để chiếc hộp tồn tại thực tế, mọi kích thước của nó phải dương. Cụ thể: chiều cao x phải dương và độ dài cạnh đáy (12 - 2x) cũng phải dương.",
-    question: "Từ các ràng buộc vật lý trên, hãy giải hệ bất phương trình để tìm khoảng giá trị của x. (Nhập dưới dạng khoảng (a; b) )",
+    type: 'question',
+    isRemedial: false,
+    title: "Liều 2: Xác suất giao (quy tắc nhân)",
+    info: "Ta đã có P(Máy I) = 0.6. \nBiết thêm rằng: tỉ lệ sản xuất ra điện thoại bị lỗi (phế phẩm) của Máy I là 2%. Nghĩa là nếu biết chắc điện thoại từ Máy I, xác suất lỗi là 0.02.",
+    question: "Hãy tính xác suất để lấy ngẫu nhiên 1 chiếc điện thoại trong kho mà nó 'vừa thuộc Máy I, vừa bị lỗi'? (Nhập số thập phân)",
     inputType: "text",
-    placeholder: "Nhập khoảng giá trị...",
-    correctAnswers: ["(0;6)", "(0; 6)", "0<x<6", "0 < x < 6", "(0,6)", "(0, 6)"],
-    hint: "Giải bất phương trình 12 - 2x > 0 để biết x phải nhỏ hơn bao nhiêu. Sau đó kết hợp với x > 0 để tìm khoảng chung.",
-    successFeedback: "Đúng vậy! Tập xác định hợp lệ là x ∈ (0; 6).",
-    visualType: "domain-search"
+    placeholder: "Nhập số (VD: 0.5)...",
+    correctAnswers: ["0.012", "0,012"],
+    correctFeedback: "Xuất sắc! Bạn đã áp dụng đúng quy tắc nhân xác suất.",
+    incorrectFeedback: "Sai mất rồi. Có vẻ bạn chưa nhớ quy tắc nhân xác suất trên sơ đồ cây. Cùng xem liều phụ đạo nhé!",
+    correctNext: 5,
+    incorrectNext: 4,
+    visualType: "tree-branch-1"
   },
   {
     id: 4,
-    title: "Liều 4: Sử dụng công cụ đạo hàm",
-    info: "Khai triển hàm số ta được: V(x) = 4x³ - 48x² + 144x. Để tìm cực trị, ta dùng công cụ mạnh nhất của Giải tích 12: đạo hàm.",
-    question: "Đạo hàm V'(x) của hàm số trên là gì?",
-    inputType: "mcq",
-    options: ["V'(x) = 12x² - 96x + 144", "V'(x) = 4x² - 96x + 144"],
-    correctAnswer: "V'(x) = 12x² - 96x + 144",
-    hint: "Áp dụng quy tắc đạo hàm (xⁿ)' = n.xⁿ⁻¹. Chi tiết: (4x³)' = 3.4x² = 12x²; (-48x²)' = 2.(-48)x = -96x; (144x)' = 144. Ghép lại nhé!",
-    successFeedback: "Chính xác! Bạn tính đạo hàm rất chuẩn.",
-    visualType: "derivative-gear"
+    type: 'remedial',
+    isRemedial: true,
+    title: "Góc phụ đạo 2: Quy tắc nhân trên sơ đồ cây",
+    info: "Để một biến cố xảy ra theo chuỗi (vừa từ Máy I -> vừa bị lỗi), ta phải dùng quy tắc nhân: \nP(Máy I ∩ Lỗi) = P(Máy I) × P(Lỗi | Máy I)\n\nCụ thể ở đây:\n- Xác suất rơi vào Máy I: 0.6\n- Xác suất bị lỗi tại Máy I: 2% = 0.02\n=> Xác suất chung: 0.6 × 0.02 = 0.012.",
+    question: "Tích của các nhánh trên sơ đồ cây chính là xác suất của biến cố giao. Hãy tiếp tục để áp dụng nó!",
+    correctNext: 5,
+    visualType: "tree-multiplication"
   },
   {
     id: 5,
-    title: "Liều 5: Tìm các điểm tới hạn",
-    info: "Điểm cực trị xảy ra khi đạo hàm bằng 0. Ta cần giải phương trình: V'(x) = 0.",
-    question: "Hãy giải phương trình 12x² - 96x + 144 = 0 để tìm 2 điểm tới hạn. (Nhập 2 số cách nhau bởi dấu phẩy, VD: 3, 4)",
+    type: 'question',
+    isRemedial: false,
+    title: "Liều 3: Xác suất toàn phần",
+    info: "Bạn đã biết nhóm phế phẩm từ Máy I chiếm tỉ lệ 0.012 (tức 1.2% toàn nhà máy). \nGiờ xét Máy II: sản lượng chiếm 40% (0.4) và tỉ lệ làm ra lỗi của Máy II là 5% (0.05).",
+    question: "Hỏi xác suất để bốc ngẫu nhiên trúng 1 chiếc điện thoại bị lỗi (bất kể từ máy nào) là bao nhiêu?",
     inputType: "text",
-    placeholder: "Nhập hai nghiệm...",
-    correctAnswers: ["2, 6", "2,6", "6, 2", "6,2", "2; 6", "2;6"],
-    hint: "Bạn có thể chia cả 2 vế cho 12 để rút gọn thành x² - 8x + 12 = 0. Sau đó nhẩm nghiệm bằng định lý Vi-ét (Tổng=8, Tích=12) hoặc bấm máy tính.",
-    successFeedback: "Chính xác! Hai điểm tới hạn là x = 2 và x = 6.",
-    visualType: "graph-roots-hard"
+    placeholder: "Nhập số thập phân...",
+    correctAnswers: ["0.032", "0,032"],
+    correctFeedback: "Hoàn toàn chính xác! Lỗi = lỗi Máy I + lỗi Máy II = 0.012 + 0.020 = 0.032.",
+    incorrectFeedback: "Đáp án chưa chuẩn. Bạn quên cộng tổng các trường hợp rồi. Mời rẽ nhánh để xem hướng dẫn.",
+    correctNext: 7,
+    incorrectNext: 6,
+    visualType: "tree-full"
   },
   {
     id: 6,
-    title: "Liều 6: Xác định thể tích cực đại",
-    info: "Trong hai nghiệm x=2 và x=6, chỉ có x=2 nằm trong tập xác định (0; 6). Ta tiến hành tính thể tích tại điểm này.",
-    question: "Với x = 2 dm, thể tích lớn nhất V_max của hộp là bao nhiêu dm³? (Nhập số liệu)",
-    inputType: "text",
-    placeholder: "Tính kết quả V(2)...",
-    correctAnswers: ["128", "128dm3", "128 dm3"],
-    hint: "Thay x=2 vào biểu thức V = x(12 - 2x)². Tính 12 - 4 = 8, sau đó bình phương lên rồi nhân với 2 ở ngoài.",
-    successFeedback: "Xuất sắc! Thể tích cực đại đạt được là 128 dm³.",
-    visualType: "graph-max"
+    type: 'remedial',
+    isRemedial: true,
+    title: "Góc phụ đạo 3: Công thức xác suất toàn phần",
+    info: "Điện thoại bị lỗi có thể xuất phát từ Máy I hoặc Máy II. Bạn cần tính xác suất của từng nhánh rồi cộng lại:\n\n1. Nhánh Máy I bị lỗi: 0.6 × 0.02 = 0.012\n2. Nhánh Máy II bị lỗi: 0.4 × 0.05 = 0.020\n\n=> Xác suất toàn phần P(Lỗi) = 0.012 + 0.020 = 0.032.",
+    question: "Vậy, trung bình cứ 1000 điện thoại thì nhà máy có 32 chiếc bị lỗi. Ghi nhớ số 0.032 này nhé!",
+    correctNext: 7,
+    visualType: "total-prob"
   },
   {
     id: 7,
-    title: "Liều 7: Bài toán phụ - Diện tích bề mặt",
-    info: "Khi x = 2, chiếc hộp có thể tích 128 dm³. Có một sự trùng hợp bất ngờ giữa Thể tích và Diện tích trong bài toán tối ưu này.",
-    question: "Hãy tính tổng diện tích bề mặt (diện tích toàn phần không nắp) của hộp khi x = 2. Bạn tìm ra kết quả là bao nhiêu?",
+    type: 'question',
+    isRemedial: false,
+    title: "Liều 4: Suy luận ngược (định lý Bayes)",
+    info: "Tình huống thực tế: Một khách hàng mua phải 1 chiếc điện thoại bị lỗi (biến cố lỗi đã chắc chắn xảy ra). Khách hàng muốn kiện dây chuyền sản xuất.",
+    question: "Xác suất để chiếc điện thoại lỗi này có nguồn gốc từ Máy I là bao nhiêu? (Nhập dưới dạng phân số tối giản a/b, VD: 1/2)",
     inputType: "text",
-    placeholder: "Nhập tổng diện tích...",
-    correctAnswers: ["128", "128dm2", "128 dm2"],
-    hint: "Diện tích đáy là 8 × 8. Diện tích 4 mặt bên là 4 × (8 × 2). Hãy cộng chúng lại với nhau.",
-    successFeedback: "Chính xác! Diện tích toàn phần cũng là 128. Thật kỳ diệu khi V = Stp tại điểm tối ưu!",
-    visualType: "magic-balance"
+    placeholder: "Nhập phân số (VD: 1/4)...",
+    correctAnswers: ["3/8", "12/32", "0.375", "37.5%"],
+    correctFeedback: "Tuyệt đỉnh! Bạn vừa tự mình chứng minh định lý Bayes phức tạp của Toán 12.",
+    incorrectFeedback: "Rất nhiều người trả lời sai câu này do tư duy trực giác. Hãy vào nhánh phụ đạo cuối cùng để thấy sự kỳ diệu của Bayes!",
+    correctNext: 9,
+    incorrectNext: 8,
+    visualType: "bayes-question"
+  },
+  {
+    id: 8,
+    type: 'remedial',
+    isRemedial: true,
+    title: "Góc phụ đạo 4: Thu hẹp không gian mẫu",
+    info: "Vì chiếc điện thoại đã bị lỗi, nên không gian mẫu của chúng ta bị thu hẹp lại, không còn là 100% nhà máy nữa, mà chỉ còn là tập hợp các điện thoại lỗi (chiếm 0.032).\n\nTrong tập hợp 0.032 nhỏ bé này, phần đóng góp của Máy I là bao nhiêu? Đó là 0.012.\n\n=> Xác suất P(Máy I | Lỗi) = 0.012 / 0.032 = 12 / 32 = 3 / 8.",
+    question: "Đây chính là cốt lõi của định lý Bayes: Lấy 'nhánh cần tính' chia cho 'tổng tất cả các nhánh'.",
+    correctNext: 9,
+    visualType: "bayes-zoom"
+  },
+  {
+    id: 9,
+    type: 'summary',
+    isRemedial: false,
+    title: "Hoàn thành phân nhánh",
+    info: "",
+    question: "",
+    visualType: "celebration"
   }
 ];
 
 export default function App() {
   const [hasStarted, setHasStarted] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentNodeId, setCurrentNodeId] = useState(1);
   const [inputValue, setInputValue] = useState('');
-  const [answers, setAnswers] = useState({});
+  const [submitStatus, setSubmitStatus] = useState('idle'); 
+  const [learningPath, setLearningPath] = useState([1]); 
   const [animate, setAnimate] = useState(false);
-  const [isFinished, setIsFinished] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState('idle');
   const [showHint, setShowHint] = useState(false);
+
+  const currentNode = branchedProgramData.find(node => node.id === currentNodeId) || branchedProgramData[0];
+  const isFinished = currentNode.type === 'summary';
 
   useEffect(() => {
     if (!hasStarted) return;
@@ -108,16 +140,15 @@ export default function App() {
       setAnimate(true);
     }, 200);
     return () => clearTimeout(timer);
-  }, [currentStep, hasStarted]);
+  }, [currentNodeId, hasStarted]);
 
   const handleCheckAnswer = () => {
-    const dose = linearProgramData[currentStep];
     let isCorrect = false;
 
-    if (dose.inputType === 'mcq') {
-      isCorrect = inputValue === dose.correctAnswer;
+    if (currentNode.inputType === 'mcq') {
+      isCorrect = inputValue === currentNode.correctAnswer;
     } else {
-      isCorrect = dose.correctAnswers.some(
+      isCorrect = currentNode.correctAnswers.some(
         ans => ans.toLowerCase().replace(/\s/g, '') === inputValue.toLowerCase().replace(/\s/g, '')
       );
     }
@@ -127,19 +158,13 @@ export default function App() {
       setShowHint(false);
     } else {
       setSubmitStatus('incorrect');
-      if (!showHint) {
-        setShowHint(true);
-      }
+      if (!showHint) setShowHint(true);
     }
   };
 
-  const handleNext = () => {
-    setAnswers({ ...answers, [currentStep]: inputValue });
-    if (currentStep < linearProgramData.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      setIsFinished(true);
-    }
+  const handleNextNode = (nextId) => {
+    setLearningPath([...learningPath, nextId]);
+    setCurrentNodeId(nextId);
   };
 
   const handleReplayAnimation = () => {
@@ -152,11 +177,9 @@ export default function App() {
   // ----------------------------------------
   if (!hasStarted) {
     return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4 md:p-8 font-sans">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 md:p-8 font-sans text-left">
         <div className="bg-white max-w-4xl w-full rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
-          
-          {/* Header */}
-          <div className="bg-slate-900 p-8 md:p-12 text-center relative overflow-hidden">
+          <div className="bg-slate-900 p-8 md:p-12 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-full opacity-10 flex items-center justify-center pointer-events-none">
               <svg viewBox="0 0 100 100" className="w-full h-full" preserveAspectRatio="none">
                 <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
@@ -166,9 +189,9 @@ export default function App() {
               </svg>
             </div>
             
-            <div className="relative z-10 flex flex-col items-center">
-              <div className="bg-teal-500 text-white px-5 py-1.5 rounded-full text-sm font-bold tracking-widest mb-6 shadow-lg shadow-teal-500/30">
-                NHÓM 11
+            <div className="relative z-10 flex flex-col items-center text-center">
+              <div className="bg-amber-500 text-slate-900 px-5 py-1.5 rounded-full text-sm font-bold tracking-widest mb-6 shadow-lg shadow-amber-500/30 flex items-center gap-2">
+                <GitBranch size={16}/> NHÓM 11
               </div>
               <h1 className="text-2xl md:text-4xl font-bold text-white mb-4 leading-tight">
                 Nhiệm vụ 7.2. Thiết kế ví dụ minh hoạ <br className="hidden md:block" /> về dạy học chương trình hoá
@@ -176,40 +199,37 @@ export default function App() {
             </div>
           </div>
 
-          {/* Body */}
-          <div className="p-8 md:p-12">
-            
-            <div className="mb-10 border-l-4 border-amber-400 pl-6 py-2 bg-gradient-to-r from-amber-50/80 to-transparent rounded-r-xl">
-              <h3 className="text-sm font-bold text-amber-600 uppercase tracking-widest mb-2 flex items-center gap-2">
-                <CheckCircle size={16} /> Yêu cầu 2
+          <div className="p-8 md:p-12 text-left">
+            <div className="mb-10 border-l-4 border-indigo-500 pl-6 py-4 bg-gradient-to-r from-indigo-50/80 to-transparent rounded-r-xl">
+              <h3 className="text-sm font-bold text-indigo-700 uppercase tracking-widest mb-2 flex items-center gap-2">
+                <GitMerge size={16} /> Yêu cầu 1
               </h3>
               <p className="text-slate-700 font-medium leading-relaxed text-sm md:text-base">
-                Hãy xây dựng một đoạn chương trình đường thẳng gồm ít nhất 7 liều (khuyến khích nhiều liều hơn) về nội dung môn toán ở trung học phổ thông.
+                Hãy xây dựng một đoạn chương trình có phân nhánh gồm ít nhất 7 liều (khuyến khích nhiều liều hơn) về nội dung môn toán ở trung học phổ thông.
               </p>
             </div>
 
-            <div className="bg-teal-50/50 rounded-3xl p-8 md:p-10 text-center border border-teal-100 mb-10 shadow-inner relative">
-               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-4 py-1 rounded-full border border-teal-100 text-xs font-bold text-teal-600 uppercase tracking-widest">
+            <div className="bg-indigo-50/50 rounded-3xl p-8 md:p-10 text-center border border-indigo-100 mb-10 shadow-inner relative">
+               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-4 py-1 rounded-full border border-indigo-100 text-xs font-bold text-indigo-600 uppercase tracking-widest shadow-sm">
                  Tên bài học
                </div>
-               <h3 className="text-2xl md:text-4xl font-extrabold text-teal-900 mt-2 mb-4">
-                 Ứng dụng đạo hàm: Bài toán tối ưu hóa cắt hộp
+               <h3 className="text-2xl md:text-4xl font-extrabold text-indigo-950 mt-2 mb-4">
+                 Xác suất có điều kiện và công thức Bayes
                </h3>
                <div className="inline-block bg-white px-4 py-1.5 rounded-md border border-slate-200 text-slate-600 font-medium text-sm shadow-sm">
-                 Toán học Lớp 12 - Chương trình mới
+                 Toán học Lớp 12 - Chương trình mới (TKXS)
                </div>
             </div>
 
             <div className="flex justify-center">
                <button
                  onClick={() => setHasStarted(true)}
-                 className="group bg-teal-600 hover:bg-teal-500 text-white font-bold py-4 px-12 rounded-full transition-all text-lg shadow-lg shadow-teal-600/30 flex items-center gap-3 hover:-translate-y-1"
+                 className="group bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-12 rounded-full transition-all text-lg shadow-lg shadow-indigo-600/30 flex items-center gap-3 hover:-translate-y-1"
                >
                  <Play size={24} fill="currentColor" className="group-hover:scale-110 transition-transform" />
-                 Bắt đầu trải nghiệm
+                 Bắt đầu
                </button>
             </div>
-
           </div>
         </div>
       </div>
@@ -217,408 +237,402 @@ export default function App() {
   }
 
   // ----------------------------------------
-  // MAIN APP LOGIC
+  // SUMMARY SCREEN
   // ----------------------------------------
-  const currentDose = linearProgramData[currentStep];
-
-  const getGraphPath = () => {
-    let pts = [];
-    for(let i=0; i<=6.5; i+=0.1){
-      let v = 4*Math.pow(i,3) - 48*Math.pow(i,2) + 144*i;
-      pts.push(`${50 + i*42},${250 - v*1.3}`);
-    }
-    return `M ${pts.join(' L ')}`;
-  };
-
-  const renderVisual = () => {
-    const type = currentDose.visualType;
-    return (
-      <div className="w-full h-full flex flex-col items-center justify-center bg-white rounded-2xl border border-slate-100 p-6 relative overflow-hidden">
-        <button 
-          onClick={handleReplayAnimation}
-          className="absolute top-4 right-4 bg-teal-50 p-2 rounded-full shadow hover:shadow-md text-teal-600 transition-all z-10 border border-teal-100"
-          title="Phát lại hiệu ứng"
-        >
-          <Play size={20} />
-        </button>
-
-        <svg viewBox="0 0 400 300" className="w-full h-full max-h-80 drop-shadow-sm">
-          <defs>
-            <marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#0d9488" />
-            </marker>
-          </defs>
-
-          {/* Type 1: Blueprint */}
-          {type === "blueprint" && (
-            <g transform="translate(100, 50)" style={{opacity: animate ? 1 : 0, transition: 'opacity 0.5s'}}>
-              <rect x="0" y="0" width="200" height="200" fill="#ccfbf1" stroke="#0f766e" strokeWidth="3" />
-              
-              <g style={{ transition: 'opacity 1s ease', opacity: animate ? 1 : 0 }}>
-                <rect x="0" y="0" width="40" height="40" fill="#f87171" opacity="0.8" />
-                <rect x="160" y="0" width="40" height="40" fill="#f87171" opacity="0.8" />
-                <rect x="0" y="160" width="40" height="40" fill="#f87171" opacity="0.8" />
-                <rect x="160" y="160" width="40" height="40" fill="#f87171" opacity="0.8" />
-              </g>
-
-              <line x1="40" y1="40" x2="160" y2="40" stroke="#0f766e" strokeWidth="2" strokeDasharray="5,5" />
-              <line x1="40" y1="160" x2="160" y2="160" stroke="#0f766e" strokeWidth="2" strokeDasharray="5,5" />
-              <line x1="40" y1="40" x2="40" y2="160" stroke="#0f766e" strokeWidth="2" strokeDasharray="5,5" />
-              <line x1="160" y1="40" x2="160" y2="160" stroke="#0f766e" strokeWidth="2" strokeDasharray="5,5" />
-
-              <text x="100" y="-10" textAnchor="middle" fill="#0f766e" className="font-bold">12 dm</text>
-              <text x="20" y="25" textAnchor="middle" fill="white" className="font-bold text-sm">x</text>
-              <line x1="0" y1="-5" x2="200" y2="-5" stroke="#0f766e" strokeWidth="1" />
-              
-              <text x="100" y="105" textAnchor="middle" fill="#0f766e" className="font-bold text-xl" style={{ opacity: animate ? 1 : 0, transition: 'opacity 1s 1s' }}>
-                {submitStatus === 'correct' ? '12 - 2x' : '?'}
-              </text>
-            </g>
-          )}
-
-          {/* Type 2: Function Machine */}
-          {type === "function-machine" && (
-            <g transform="translate(20, 100)" style={{opacity: animate ? 1 : 0, transition: 'opacity 0.8s ease-in-out'}}>
-              <rect x="0" y="30" width="50" height="40" rx="8" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="2" />
-              <text x="25" y="55" textAnchor="middle" fill="#475569" className="font-bold">x</text>
-              <line x1="50" y1="50" x2="100" y2="50" stroke="#0f766e" strokeWidth="3" markerEnd="url(#arrow-teal)" strokeDasharray="5,5">
-                 {/* Re-added animation tag */}
-                 {animate && <animate attributeName="stroke-dashoffset" values="10;0" dur="0.5s" repeatCount="indefinite" />}
-              </line>
-
-              {/* Increased rect width to 160 to prevent text overflow */}
-              <rect x="100" y="10" width="160" height="80" rx="12" fill="#ccfbf1" stroke="#0d9488" strokeWidth="3" />
-              <text x="180" y="40" textAnchor="middle" fill="#0f766e" className="font-bold text-[11px] uppercase tracking-widest">Cỗ máy hàm số</text>
-              
-              <rect x="115" y="50" width="130" height="30" rx="6" fill="#ffffff" stroke="#0d9488" strokeWidth="1" />
-              <text x="180" y="70" textAnchor="middle" fill="#0f766e" className="font-bold text-sm">
-                {submitStatus === 'correct' ? 'x(12 - 2x)²' : 'V(x) = ?'}
-              </text>
-
-              <line x1="260" y1="50" x2="310" y2="50" stroke="#0ea5e9" strokeWidth="3" markerEnd="url(#arrow-teal)" strokeDasharray="5,5">
-                 {/* Re-added animation tag */}
-                 {animate && <animate attributeName="stroke-dashoffset" values="10;0" dur="0.5s" repeatCount="indefinite" />}
-              </line>
-              <rect x="310" y="30" width="50" height="40" rx="8" fill="#f0f9ff" stroke="#38bdf8" strokeWidth="2" />
-              <text x="335" y="55" textAnchor="middle" fill="#0369a1" className="font-bold">V</text>
-            </g>
-          )}
-
-          {/* Type 3: Domain Search Abstract Visual */}
-          {type === "domain-search" && (
-            <g transform="translate(100, 50)" style={{opacity: animate ? 1 : 0, transition: 'opacity 1s ease-in-out'}}>
-               <g>
-                 {/* Added hovering animation for magnifying glass */}
-                 {animate && <animateTransform attributeName="transform" type="translate" values="0,0; 0,-8; 0,0" dur="3s" repeatCount="indefinite" />}
-                 <circle cx="100" cy="90" r="55" fill="#f0fdfa" stroke="#14b8a6" strokeWidth="4" />
-                 <line x1="140" y1="130" x2="175" y2="165" stroke="#14b8a6" strokeWidth="10" strokeLinecap="round" />
-                 <circle cx="100" cy="90" r="40" fill="#ccfbf1" opacity="0.5" />
-                 
-                 <text x="100" y="105" textAnchor="middle" fill="#0f766e" className="font-bold text-4xl font-serif">D = ?</text>
-               </g>
-               <text x="100" y="210" textAnchor="middle" fill="#64748b" className="font-bold text-xs uppercase tracking-widest">
-                 {submitStatus === 'correct' ? 'Đã tìm thấy tập xác định' : 'Tìm điều kiện thực tế'}
-               </text>
-            </g>
-          )}
-
-          {/* Type 4: Derivative Gear Abstract Visual */}
-          {type === "derivative-gear" && (
-            <g transform="translate(100, 50)" style={{opacity: animate ? 1 : 0, transition: 'opacity 1s ease-in-out'}}>
-               {/* Spinning outer gear representation with robust SVG animation */}
-               <g style={{transformOrigin: '100px 90px'}}>
-                 {animate && <animateTransform attributeName="transform" type="rotate" from="0 100 90" to="360 100 90" dur="10s" repeatCount="indefinite" />}
-                 <circle cx="100" cy="90" r="60" fill="#f8fafc" stroke="#94a3b8" strokeWidth="8" strokeDasharray="16 12" />
-                 <circle cx="100" cy="90" r="48" fill="#e2e8f0" stroke="#cbd5e1" strokeWidth="2" />
-                 <circle cx="100" cy="90" r="40" fill="#ffffff" />
-               </g>
-               
-               <text x="100" y="100" textAnchor="middle" fill="#334155" className="font-serif italic text-3xl font-bold">d/dx</text>
-               <text x="100" y="195" textAnchor="middle" fill="#64748b" className="font-bold text-xs uppercase tracking-widest">
-                 {submitStatus === 'correct' ? 'Đã xử lý hàm số' : 'Xử lý đạo hàm'}
-               </text>
-            </g>
-          )}
-
-          {/* Type 5: Graph Roots of Derivative (Parabola with TWO question marks) */}
-          {type === "graph-roots-hard" && (
-            <g style={{opacity: animate ? 1 : 0, transition: 'opacity 0.5s'}}>
-              <line x1="30" y1="200" x2="370" y2="200" stroke="#cbd5e1" strokeWidth="2" markerEnd="url(#arrow-teal)" />
-              <line x1="50" y1="250" x2="50" y2="30" stroke="#cbd5e1" strokeWidth="2" markerEnd="url(#arrow-teal)" />
-              <text x="360" y="220" fill="#64748b" className="font-bold font-serif italic">x</text>
-              <text x="30" y="40" fill="#64748b" className="font-bold font-serif italic">V'(x)</text>
-
-              <path
-                d="M 70 35 Q 210 525 350 35"
-                fill="none"
-                stroke="#f43f5e"
-                strokeWidth="4"
-                strokeLinecap="round"
-                style={{ strokeDasharray: 800, strokeDashoffset: animate ? 0 : 800, transition: 'stroke-dashoffset 1.5s ease-in-out' }}
-              />
-              
-              <text x="210" y="150" textAnchor="middle" fill="#f43f5e" className="font-bold text-sm" style={{opacity: animate ? 1 : 0, transition: 'opacity 0.5s 1.5s'}}>
-                Đồ thị đạo hàm V'(x)
-              </text>
-
-              {/* Root 1 (x_1) */}
-              <g style={{ opacity: animate ? 1 : 0, transition: 'opacity 0.5s 1.5s' }}>
-                <circle cx="130" cy="200" r="6" fill="#0ea5e9" />
-                <text x="130" y="225" textAnchor="middle" fill="#0ea5e9" className="font-bold text-sm">
-                  {submitStatus === 'correct' ? 'x₁ = 2' : 'x₁ = ?'}
-                </text>
-              </g>
-
-              {/* Root 2 (x_2) */}
-              <g style={{ opacity: animate ? 1 : 0, transition: 'opacity 0.5s 1.5s' }}>
-                <circle cx="290" cy="200" r="6" fill="#0ea5e9" />
-                <text x="290" y="225" textAnchor="middle" fill="#0ea5e9" className="font-bold text-sm">
-                  {submitStatus === 'correct' ? 'x₂ = 6' : 'x₂ = ?'}
-                </text>
-              </g>
-            </g>
-          )}
-
-          {/* Type 6: Maximum Point Highlight (Cubic Graph) */}
-          {type === "graph-max" && (
-            <g style={{opacity: animate ? 1 : 0, transition: 'opacity 0.5s'}}>
-              {/* Axes */}
-              <line x1="50" y1="250" x2="350" y2="250" stroke="#cbd5e1" strokeWidth="2" markerEnd="url(#arrow-teal)" />
-              <line x1="50" y1="250" x2="50" y2="20" stroke="#cbd5e1" strokeWidth="2" markerEnd="url(#arrow-teal)" />
-              <text x="340" y="270" fill="#64748b" className="font-bold font-serif italic">x</text>
-              <text x="30" y="30" fill="#64748b" className="font-bold font-serif italic">V(x)</text>
-
-              {/* Ticks */}
-              <text x="134" y="270" fill="#94a3b8" className="text-xs font-bold">2</text>
-              {submitStatus === 'correct' && (
-                <text x="25" y="88" fill="#94a3b8" className="text-xs font-bold">128</text>
-              )}
-
-              {/* Function Curve */}
-              <path 
-                d={getGraphPath()} 
-                fill="none" 
-                stroke="#0ea5e9" 
-                strokeWidth="4" 
-                strokeLinecap="round"
-                style={{ strokeDasharray: 1000, strokeDashoffset: animate ? 0 : 1000, transition: 'stroke-dashoffset 2s ease-in-out' }}
-              />
-
-              <g style={{ opacity: animate ? 1 : 0, transition: 'opacity 1s 1s' }}>
-                <line x1="50" y1="83.6" x2="134" y2="83.6" stroke="#0ea5e9" strokeWidth="2" strokeDasharray="5,5" />
-                <line x1="134" y1="250" x2="134" y2="83.6" stroke="#0ea5e9" strokeWidth="2" strokeDasharray="5,5" />
-                <circle cx="134" cy="83.6" r="7" fill="#f59e0b" stroke="white" strokeWidth="2" />
-                
-                <rect x="144" y="60" width="80" height="30" rx="4" fill="#f59e0b" />
-                <text x="184" y="80" textAnchor="middle" fill="white" className="font-bold text-sm">
-                  {submitStatus === 'correct' ? 'Max: 128' : 'Max: ?'}
-                </text>
-              </g>
-            </g>
-          )}
-
-          {/* Type 7: Magic Balance */}
-          {type === "magic-balance" && (
-            <g style={{opacity: animate ? 1 : 0, transition: 'opacity 0.8s'}}>
-               
-               {/* Left Card: Volume */}
-               <g style={{
-                   transform: submitStatus === 'correct' ? 'translate(60px, 90px)' : 'translate(60px, 50px)',
-                   transition: 'transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
-               }}>
-                   <rect x="0" y="0" width="110" height="130" rx="16" fill="#f0fdfa" stroke="#14b8a6" strokeWidth="3" />
-                   {/* 3D Box Icon */}
-                   <path d="M30 45 L55 35 L80 45 L80 75 L55 85 L30 75 Z" fill="#99f6e4" stroke="#0d9488" strokeWidth="2"/>
-                   <path d="M55 35 L55 60 L80 45 M30 45 L55 60 L55 85" stroke="#0d9488" strokeWidth="2" fill="none"/>
-                   
-                   <text x="55" y="110" textAnchor="middle" fill="#0f766e" className="font-bold text-xl">V_max</text>
-               </g>
-
-               {/* Right Card: Surface Area */}
-               <g style={{
-                   transform: submitStatus === 'correct' ? 'translate(230px, 90px)' : 'translate(230px, 130px)',
-                   transition: 'transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
-               }}>
-                   <rect x="0" y="0" width="110" height="130" rx="16" fill="#fffbeb" stroke="#f59e0b" strokeWidth="3" />
-                   {/* Unfolded Net Icon */}
-                   <rect x="45" y="25" width="20" height="20" fill="#fde68a" stroke="#d97706" strokeWidth="2"/>
-                   <rect x="25" y="45" width="20" height="20" fill="#fde68a" stroke="#d97706" strokeWidth="2"/>
-                   <rect x="45" y="45" width="20" height="20" fill="#fde68a" stroke="#d97706" strokeWidth="2"/>
-                   <rect x="65" y="45" width="20" height="20" fill="#fde68a" stroke="#d97706" strokeWidth="2"/>
-                   <rect x="45" y="65" width="20" height="20" fill="#fde68a" stroke="#d97706" strokeWidth="2"/>
-                   
-                   <text x="55" y="110" textAnchor="middle" fill="#b45309" className="font-bold text-xl">S_tp</text>
-               </g>
-
-               {/* The Magic Equal Sign & Value */}
-               <g style={{
-                   opacity: submitStatus === 'correct' ? 1 : 0,
-                   transform: submitStatus === 'correct' ? 'scale(1)' : 'scale(0.5)',
-                   transformOrigin: '200px 155px',
-                   transition: 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s',
-               }}>
-                   <circle cx="200" cy="155" r="28" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="2" />
-                   <text x="200" y="165" textAnchor="middle" fill="#475569" className="font-bold text-4xl">=</text>
-                   
-                   <rect x="150" y="235" width="100" height="36" rx="18" fill="#10b981" />
-                   <text x="200" y="260" textAnchor="middle" fill="white" className="font-bold text-xl tracking-widest">128</text>
-               </g>
-
-               {/* Dotted lines showing alignment */}
-               <line x1="60" y1="155" x2="340" y2="155" stroke="#94a3b8" strokeWidth="2" strokeDasharray="6,6" style={{opacity: submitStatus === 'correct' ? 0.3 : 0, transition: 'opacity 1s 1s'}} />
-            </g>
-          )}
-
-        </svg>
-
-        <p className="mt-4 text-[11px] font-medium text-teal-600/70 italic flex items-center gap-2 bg-teal-50 px-3 py-1 rounded-full">
-          <Maximize size={12}/> Minh họa tư duy Toán học
-        </p>
-      </div>
-    );
-  };
-
   if (isFinished) {
     return (
-      <div className="min-h-screen bg-teal-50 flex items-center justify-center p-6 font-sans">
-        <div className="bg-white max-w-2xl w-full rounded-2xl shadow-xl p-10 text-center border-t-8 border-teal-500">
-          <div className="w-20 h-20 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div className="min-h-screen bg-indigo-50 flex items-center justify-center p-6 font-sans text-left">
+        <div className="bg-white max-w-2xl w-full rounded-2xl shadow-xl p-10 text-center border-t-8 border-indigo-500">
+          <div className="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <Award size={40} />
           </div>
-          <h1 className="text-2xl font-bold text-slate-800 mb-4">Hoàn thành bài toán Tối ưu</h1>
+          <h1 className="text-2xl font-bold text-slate-800 mb-4">Hoàn thành cây xác suất!</h1>
           <p className="text-slate-600 mb-8 text-sm leading-relaxed px-4">
-            Bạn đã sử dụng thành công công cụ đạo hàm để giải quyết bài toán thực tế. Hãy ghi nhớ: tại điểm tối ưu, các đại lượng thường có sự cân bằng và đối xứng kỳ diệu!
+            Bạn đã trải nghiệm mô hình học <strong>phân nhánh (Branching)</strong>. Bằng việc chẩn đoán lỗi sai và phụ đạo kịp thời, kiến thức về định lý Bayes phức tạp đã trở nên dễ hiểu hơn rất nhiều.
           </p>
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-left mb-8 max-h-64 overflow-y-auto shadow-inner">
-            <h3 className="font-bold text-teal-800 mb-4 text-xs uppercase tracking-widest border-b border-teal-200 pb-2">Hồ sơ giải bài:</h3>
-            <ul className="space-y-3">
-              {linearProgramData.map((dose) => (
-                <li key={`summary-${dose.id}`} className="flex flex-col sm:flex-row gap-2 text-[12px] border-b border-slate-100 pb-2 last:border-0">
-                  <span className="font-semibold text-teal-700 min-w-[140px]">{dose.title}:</span>
-                  <span className="text-slate-700 bg-white px-2 py-0.5 rounded shadow-sm italic">"{answers[dose.id - 1]}"</span>
-                </li>
-              ))}
-            </ul>
+          
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-left mb-8 shadow-inner">
+            <h3 className="font-bold text-indigo-800 mb-4 text-xs uppercase tracking-widest border-b border-indigo-200 pb-2 flex items-center gap-2">
+              <GitBranch size={14}/> Lộ trình học cá nhân hóa của bạn:
+            </h3>
+            <div className="flex flex-wrap gap-2 items-center text-sm font-medium">
+              {learningPath.map((nodeId, index) => {
+                const nodeRef = branchedProgramData.find(n => n.id === nodeId);
+                const isRemedial = nodeRef?.isRemedial;
+                const shortTitle = nodeRef?.title.split(':')[0] || `Liều ${nodeId}`;
+                return (
+                  <React.Fragment key={`path-${index}`}>
+                    <span className={`px-3 py-1 rounded-full border shadow-sm ${isRemedial ? 'bg-amber-100 border-amber-300 text-amber-800' : 'bg-indigo-100 border-indigo-300 text-indigo-800'}`}>
+                      {shortTitle}
+                    </span>
+                    {index < learningPath.length - 1 && <ArrowRight size={14} className="text-slate-400" />}
+                  </React.Fragment>
+                );
+              })}
+            </div>
+            <p className="mt-4 text-xs text-slate-500 italic">
+              *Các khối màu vàng là những lúc hệ thống đã đưa bạn sang nhánh phụ đạo để củng cố kiến thức trước khi đi tiếp.
+            </p>
           </div>
+
           <button 
-            onClick={() => { setCurrentStep(0); setAnswers({}); setIsFinished(false); setHasStarted(false); }}
-            className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-8 rounded-full transition-all text-[13px] shadow-lg shadow-teal-200"
+            onClick={() => { 
+              setCurrentNodeId(1); 
+              setLearningPath([1]); 
+              setHasStarted(false); 
+            }}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full transition-all text-[13px] shadow-lg shadow-indigo-200 flex items-center gap-2 mx-auto"
           >
-            Quay lại trang chủ
+            <RotateCcw size={16}/> Học lại từ đầu
           </button>
         </div>
       </div>
     );
   }
 
+  // ----------------------------------------
+  // SVG VISUALIZATIONS
+  // ----------------------------------------
+  const renderVisual = () => {
+    const type = currentNode.visualType;
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 rounded-2xl border border-slate-200 p-6 relative overflow-hidden shadow-inner">
+        <button 
+          onClick={handleReplayAnimation}
+          className="absolute top-4 right-4 bg-white p-2 rounded-full shadow hover:shadow-md text-indigo-600 transition-all z-10 border border-slate-100"
+          title="Phát lại hiệu ứng"
+        >
+          <Play size={20} />
+        </button>
+
+        <svg viewBox="0 0 400 300" className="w-full h-full max-h-80">
+          <defs>
+            <marker id="arrow-ind" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#6366f1" />
+            </marker>
+            <marker id="arrow-amb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b" />
+            </marker>
+            <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+            </marker>
+          </defs>
+
+          {/* Node 1: Factory Split */}
+          {type === "factory-split" && (
+            <g transform="translate(40, 50)" style={{opacity: animate ? 1 : 0, transition: 'opacity 0.8s'}}>
+              <rect x="0" y="50" width="320" height="20" fill="#e2e8f0" rx="10"/>
+              <rect x="0" y="50" width="192" height="20" fill="#818cf8" rx="10"/>
+              <rect x="192" y="50" width="128" height="20" fill="#fcd34d" rx="10"/>
+              
+              <path d="M 96 40 L 96 10" stroke="#6366f1" strokeWidth="2" />
+              <rect x="46" y="-20" width="100" height="30" rx="4" fill="#6366f1" />
+              <text x="96" y="0" textAnchor="middle" fill="white" className="font-bold text-xs">Máy I (60%)</text>
+              
+              <path d="M 256 40 L 256 10" stroke="#f59e0b" strokeWidth="2" />
+              <rect x="206" y="-20" width="100" height="30" rx="4" fill="#f59e0b" />
+              <text x="256" y="0" textAnchor="middle" fill="white" className="font-bold text-xs">Máy II (40%)</text>
+
+              <g style={{transform: animate ? 'translateY(0)' : 'translateY(-20px)', opacity: animate ? 1 : 0, transition: 'all 1s 0.5s'}}>
+                 <circle cx="160" cy="140" r="40" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="4" strokeDasharray="6,6" />
+                 <text x="160" y="145" textAnchor="middle" fill="#64748b" className="font-bold text-2xl">?</text>
+                 <text x="160" y="195" textAnchor="middle" fill="#64748b" className="font-bold text-xs">chọn 1 sản phẩm</text>
+              </g>
+            </g>
+          )}
+
+          {/* Node 2: Percent Conversion */}
+          {type === "percent-conversion" && (
+            <g transform="translate(100, 50)" style={{opacity: animate ? 1 : 0, transition: 'opacity 0.8s'}}>
+              <circle cx="100" cy="100" r="80" fill="#fcd34d" />
+              <path d="M 100 100 L 100 20 A 80 80 0 1 1 23.5 75.3 Z" fill="#818cf8" />
+              
+              <rect x="20" y="10" width="60" height="24" fill="#ffffff" rx="4" />
+              <text x="50" y="26" textAnchor="middle" fill="#4f46e5" className="font-bold text-sm">60%</text>
+              
+              <line x1="50" y1="34" x2="50" y2="80" stroke="#4f46e5" strokeWidth="2" markerEnd="url(#arrow-ind)" />
+              
+              <rect x="25" y="85" width="50" height="30" fill="#4f46e5" rx="4" />
+              <text x="50" y="105" textAnchor="middle" fill="white" className="font-bold text-lg">0.6</text>
+            </g>
+          )}
+
+          {/* Node 3: Tree Branch 1 - Centered and nicely spaced */}
+          {type === "tree-branch-1" && (
+            <g transform="translate(30, 100)" style={{opacity: animate ? 1 : 0, transition: 'opacity 0.8s'}}>
+              <circle cx="20" cy="50" r="10" fill="#94a3b8" />
+              
+              {/* Branch to Machine I */}
+              <line x1="30" y1="50" x2="110" y2="10" stroke="#6366f1" strokeWidth="3" markerEnd="url(#arrow-ind)" />
+              <text x="60" y="15" fill="#4f46e5" className="font-bold text-xs bg-white">0.6</text>
+              
+              <rect x="120" y="-10" width="60" height="30" fill="#e0e7ff" stroke="#6366f1" strokeWidth="2" rx="4" />
+              <text x="150" y="10" textAnchor="middle" fill="#4f46e5" className="font-bold text-xs">Máy I</text>
+
+              {/* Branch from Machine I to Defect */}
+              <g style={{opacity: animate ? 1 : 0, transition: 'opacity 1s 1s'}}>
+                <line x1="180" y1="5" x2="260" y2="5" stroke="#ef4444" strokeWidth="3" markerEnd="url(#arrow-red)" />
+                <text x="220" y="-5" textAnchor="middle" fill="#ef4444" className="font-bold text-[11px]">0.02</text>
+                
+                <rect x="270" y="-10" width="60" height="30" fill="#fee2e2" stroke="#ef4444" strokeWidth="2" rx="4" />
+                <text x="300" y="10" textAnchor="middle" fill="#ef4444" className="font-bold text-sm">lỗi</text>
+              </g>
+            </g>
+          )}
+
+          {/* Node 4: Tree Multiplication */}
+          {type === "tree-multiplication" && (
+            <g transform="translate(30, 100)" style={{opacity: animate ? 1 : 0, transition: 'opacity 0.8s'}}>
+              <circle cx="20" cy="50" r="10" fill="#94a3b8" />
+              
+              <line x1="30" y1="50" x2="110" y2="10" stroke="#6366f1" strokeWidth="3" markerEnd="url(#arrow-ind)" />
+              <rect x="120" y="-10" width="60" height="30" fill="#e0e7ff" stroke="#6366f1" strokeWidth="2" rx="4" />
+              <text x="150" y="10" textAnchor="middle" fill="#4f46e5" className="font-bold text-xs">Máy I</text>
+              
+              <line x1="180" y1="5" x2="260" y2="5" stroke="#ef4444" strokeWidth="3" markerEnd="url(#arrow-red)" />
+              <rect x="270" y="-10" width="60" height="30" fill="#fee2e2" stroke="#ef4444" strokeWidth="2" rx="4" />
+              <text x="300" y="10" textAnchor="middle" fill="#ef4444" className="font-bold text-sm">lỗi</text>
+              
+              <rect x="60" y="50" width="240" height="40" fill="#1e293b" rx="8" />
+              <text x="180" y="75" textAnchor="middle" fill="#facc15" className="font-bold tracking-widest">0.6 × 0.02 = 0.012</text>
+            </g>
+          )}
+
+          {/* Node 5: Full Tree - Carefully measured to prevent overflow */}
+          {type === "tree-full" && (
+            <g transform="translate(20, 100)" style={{opacity: animate ? 1 : 0, transition: 'opacity 0.8s'}}>
+              <circle cx="20" cy="50" r="10" fill="#94a3b8" />
+              
+              {/* Path 1 */}
+              <line x1="30" y1="45" x2="110" y2="10" stroke="#6366f1" strokeWidth="2" />
+              <text x="60" y="20" fill="#4f46e5" className="font-bold text-[10px]">0.6</text>
+              
+              <rect x="110" y="-5" width="50" height="20" fill="#e0e7ff" rx="4" />
+              <text x="135" y="8" textAnchor="middle" fill="#4f46e5" className="font-bold text-[10px]">Máy I</text>
+              
+              <line x1="160" y1="5" x2="230" y2="5" stroke="#ef4444" strokeWidth="3" markerEnd="url(#arrow-red)" />
+              <text x="195" y="-5" textAnchor="middle" fill="#ef4444" className="font-bold text-[10px]">0.02</text>
+              
+              <rect x="240" y="-10" width="80" height="30" fill="#fee2e2" stroke="#ef4444" strokeWidth="2" rx="4" />
+              <text x="280" y="10" textAnchor="middle" fill="#ef4444" className="font-bold text-[10px]">lỗi (0.012)</text>
+
+              {/* Path 2 */}
+              <line x1="30" y1="55" x2="110" y2="90" stroke="#f59e0b" strokeWidth="2" />
+              <text x="60" y="90" fill="#d97706" className="font-bold text-[10px]">0.4</text>
+              
+              <rect x="110" y="85" width="50" height="20" fill="#fef3c7" rx="4" />
+              <text x="135" y="98" textAnchor="middle" fill="#d97706" className="font-bold text-[10px]">Máy II</text>
+              
+              <line x1="160" y1="95" x2="230" y2="95" stroke="#ef4444" strokeWidth="3" markerEnd="url(#arrow-red)" />
+              <text x="195" y="85" textAnchor="middle" fill="#ef4444" className="font-bold text-[10px]">0.05</text>
+              
+              <rect x="240" y="80" width="80" height="30" fill="#fee2e2" stroke="#ef4444" strokeWidth="2" rx="4" />
+              <text x="280" y="100" textAnchor="middle" fill="#ef4444" className="font-bold text-[10px]">lỗi (0.020)</text>
+
+              {/* Question Box */}
+              <g style={{opacity: animate ? 1 : 0, transition: 'opacity 1s 1.5s'}}>
+                 <path d="M 330 5 Q 360 50 330 95" fill="none" stroke="#64748b" strokeWidth="2" strokeDasharray="4,4" />
+                 <text x="350" y="58" fill="#1e293b" className="font-bold text-2xl">+</text>
+              </g>
+            </g>
+          )}
+
+          {/* Node 6: Total Prob */}
+          {type === "total-prob" && (
+            <g transform="translate(80, 80)" style={{opacity: animate ? 1 : 0, transition: 'opacity 0.8s'}}>
+               <rect x="0" y="0" width="240" height="50" rx="8" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="2" />
+               <text x="120" y="30" textAnchor="middle" fill="#0f172a" className="font-bold font-serif text-lg">0.012 + 0.020</text>
+               
+               <line x1="120" y1="60" x2="120" y2="100" stroke="#64748b" strokeWidth="3" markerEnd="url(#arrow-ind)" />
+               
+               <rect x="70" y="110" width="100" height="40" rx="8" fill="#ef4444" />
+               <text x="120" y="135" textAnchor="middle" fill="white" className="font-bold text-xl tracking-widest">0.032</text>
+               <text x="120" y="170" textAnchor="middle" fill="#ef4444" className="font-bold text-xs uppercase tracking-widest">Tổng phế phẩm</text>
+            </g>
+          )}
+
+          {/* Node 7: Bayes Question */}
+          {type === "bayes-question" && (
+            <g transform="translate(40, 50)" style={{opacity: animate ? 1 : 0, transition: 'opacity 0.8s'}}>
+              <circle cx="150" cy="100" r="80" fill="#fee2e2" stroke="#ef4444" strokeWidth="4" />
+              <text x="150" y="45" textAnchor="middle" fill="#ef4444" className="font-bold text-xs">Tập hợp điện thoại lỗi</text>
+              
+              <path d="M 150 20 A 80 80 0 0 0 80 140 A 80 80 0 0 0 220 140 Z" fill="#e0e7ff" />
+              <path d="M 150 20 L 150 180" stroke="#ef4444" strokeWidth="4" />
+
+              <text x="110" y="110" textAnchor="middle" fill="#4f46e5" className="font-bold text-xs">Máy I</text>
+              <text x="110" y="125" textAnchor="middle" fill="#4f46e5" className="font-bold text-[10px]">(0.012)</text>
+
+              <text x="190" y="110" textAnchor="middle" fill="#d97706" className="font-bold text-xs">Máy II</text>
+              <text x="190" y="125" textAnchor="middle" fill="#d97706" className="font-bold text-[10px]">(0.020)</text>
+
+              <g style={{opacity: animate ? 1 : 0, transition: 'opacity 1s 1s'}}>
+                 <circle cx="110" cy="115" r="45" fill="none" stroke="#4f46e5" strokeWidth="4" strokeDasharray="8,4" />
+                 <path d="M 150 115 L 240 180" stroke="#4f46e5" strokeWidth="2" strokeDasharray="4,4" />
+                 <rect x="220" y="180" width="100" height="30" fill="#4f46e5" rx="4" />
+                 <text x="270" y="200" textAnchor="middle" fill="white" className="font-bold text-sm">tỉ lệ = ?</text>
+              </g>
+            </g>
+          )}
+
+          {/* Node 8: Bayes Zoom (Remedial) */}
+          {type === "bayes-zoom" && (
+            <g transform="translate(80, 80)" style={{opacity: animate ? 1 : 0, transition: 'opacity 0.8s'}}>
+               <rect x="0" y="0" width="240" height="80" rx="12" fill="#1e293b" />
+               <text x="120" y="30" textAnchor="middle" fill="#94a3b8" className="font-bold text-xs uppercase tracking-widest">Định lý Bayes</text>
+               <text x="120" y="60" textAnchor="middle" fill="#facc15" className="font-bold font-serif text-2xl">0.012 / 0.032</text>
+               
+               <line x1="120" y1="90" x2="120" y2="120" stroke="#94a3b8" strokeWidth="3" markerEnd="url(#arrow-ind)" />
+               
+               <rect x="70" y="130" width="100" height="40" rx="8" fill="#4f46e5" />
+               <text x="120" y="156" textAnchor="middle" fill="white" className="font-bold text-xl tracking-widest">3 / 8</text>
+            </g>
+          )}
+
+          {/* Node 9: Celebration */}
+          {type === "celebration" && (
+            <g transform="translate(200, 150)">
+              <circle cx="0" cy="0" r="80" fill="#e0e7ff" className="animate-pulse" />
+              <GitBranch x="-40" y="-40" size={80} color="#4f46e5" />
+              
+              <circle cx="-100" cy="-80" r="8" fill="#facc15" style={{ animation: animate ? 'bounce 2s infinite' : 'none' }} />
+              <circle cx="100" cy="60" r="10" fill="#ef4444" style={{ animation: animate ? 'bounce 2s infinite 0.5s' : 'none' }} />
+              <circle cx="-80" cy="80" r="6" fill="#10b981" style={{ animation: animate ? 'bounce 2s infinite 1s' : 'none' }} />
+              <circle cx="110" cy="-60" r="12" fill="#8b5cf6" style={{ animation: animate ? 'bounce 2s infinite 0.2s' : 'none' }} />
+              <style>{`@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }`}</style>
+            </g>
+          )}
+        </svg>
+
+        <p className="mt-4 text-[11px] font-medium text-indigo-600/70 italic flex items-center gap-2 bg-indigo-50 px-3 py-1 rounded-full">
+          <Maximize size={12}/> Mô phỏng chương trình phân nhánh (Branching)
+        </p>
+      </div>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4 md:p-8 font-sans overflow-hidden">
-      <div className="bg-white max-w-5xl w-full rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto md:h-[650px] border border-slate-200">
+    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4 md:p-8 font-sans overflow-hidden text-left">
+      <div className="bg-white max-w-6xl w-full rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto md:h-[650px] border border-slate-200">
         
         <div className="w-full md:w-5/12 bg-slate-900 text-white flex flex-col relative z-10 shadow-2xl">
           <div className="h-1.5 bg-slate-800 w-full relative">
             <div 
-              className="absolute top-0 left-0 h-full bg-teal-400 transition-all duration-700 ease-out shadow-[0_0_10px_rgba(45,212,191,0.5)]"
-              style={{ width: `${((currentStep + 1) / linearProgramData.length) * 100}%` }}
+              className={`absolute top-0 left-0 h-full transition-all duration-700 ease-out shadow-[0_0_10px_rgba(99,102,241,0.5)] ${currentNode.isRemedial ? 'bg-amber-400' : 'bg-indigo-500'}`}
+              style={{ width: `${(learningPath.length / 9) * 100}%` }}
             ></div>
           </div>
-          <div className="p-8 flex flex-col h-full overflow-y-auto">
-            <div className="flex items-center gap-2 text-teal-300 text-[10px] font-bold uppercase tracking-[0.2em] mb-4">
-              <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
-              Toán 12 • Giải tích • Tối ưu hóa
+
+          <div className="p-8 md:p-10 flex flex-col h-full overflow-y-auto text-left">
+            <div className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] mb-4 ${currentNode.isRemedial ? 'text-amber-400' : 'text-indigo-400'}`}>
+              <span className={`w-2 h-2 rounded-full animate-pulse ${currentNode.isRemedial ? 'bg-amber-400' : 'bg-indigo-400'}`}></span>
+              {currentNode.isRemedial ? 'Liều phụ đạo (Remedial dose)' : 'Liều chính (Main path)'}
             </div>
-            <h2 className="text-xl font-bold mb-6 text-white leading-tight">{currentDose.title}</h2>
+            
+            <h2 className="text-xl font-bold mb-6 text-white leading-tight">{currentNode.title}</h2>
+            
             <div className="mb-6 flex-grow">
-              <h3 className="flex items-center gap-2 text-slate-300 font-semibold mb-3 text-sm italic">
-                <Info size={16} className="text-teal-400" /> Thông tin:
+              <h3 className={`flex items-center gap-2 font-semibold mb-3 text-sm italic text-left ${currentNode.isRemedial ? 'text-amber-300' : 'text-slate-300'}`}>
+                {currentNode.isRemedial ? <AlertTriangle size={16} /> : <Info size={16} />} Thông tin:
               </h3>
-              <p className="text-slate-300 leading-relaxed text-sm">{currentDose.info}</p>
+              <p className="text-slate-300 leading-relaxed text-[14px] whitespace-pre-wrap text-left">{currentNode.info}</p>
             </div>
+
             <div className="mt-auto pt-6 border-t border-slate-800">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="flex items-center gap-2 text-amber-400 font-bold text-sm">
-                  <HelpCircle size={16} /> Câu hỏi:
-                </h3>
-                {submitStatus !== 'correct' && (
-                  <button 
-                    onClick={() => setShowHint(!showHint)}
-                    className="text-[11px] font-bold text-slate-300 bg-slate-800 hover:bg-slate-700 hover:text-amber-400 px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-all border border-slate-700"
-                  >
-                    <Lightbulb size={14} className={showHint ? "text-amber-400" : ""} />
-                    {showHint ? "Ẩn gợi ý" : "Gợi ý"}
-                  </button>
-                )}
-              </div>
-              <p className="text-white mb-4 text-[14px] font-medium">{currentDose.question}</p>
-              
-              {/* Hint Box */}
-              <div className={`overflow-hidden transition-all duration-300 ${showHint ? 'max-h-40 mb-4 opacity-100' : 'max-h-0 opacity-0'}`}>
-                <div className="bg-amber-900/30 border border-amber-500/30 rounded-lg p-3 text-amber-200 text-[12px] italic flex items-start gap-2">
-                  <Lightbulb size={16} className="text-amber-400 shrink-0 mt-0.5" />
-                  <p>{currentDose.hint}</p>
-                </div>
-              </div>
-              
-              {submitStatus === 'incorrect' && (
-                <div className="bg-rose-500/10 border border-rose-500/40 rounded-lg p-3 mb-4 flex gap-2 items-start text-rose-200 text-[12px] animate-in fade-in zoom-in duration-300">
-                  <XCircle size={16} className="text-rose-400 shrink-0 mt-0.5" />
-                  <p>Sai rồi! Bạn hãy xem lại gợi ý và thử tính toán lại nhé.</p>
+              {currentNode.question && (
+                <div className="mb-4">
+                  <h3 className="flex items-center gap-2 text-indigo-300 font-bold text-sm mb-2 text-left">
+                    <HelpCircle size={16} /> Câu hỏi / Yêu cầu:
+                  </h3>
+                  <p className="text-white text-[14px] font-medium text-left">{currentNode.question}</p>
                 </div>
               )}
-              {submitStatus === 'correct' && (
-                <div className="bg-teal-500/10 border border-teal-500/40 rounded-lg p-3 mb-4 flex gap-2 items-start text-teal-200 text-[12px] animate-in fade-in zoom-in duration-300">
-                  <CheckCircle2 size={16} className="text-teal-400 shrink-0 mt-0.5" />
-                  <p>{currentDose.successFeedback}</p>
-                </div>
-              )}
-              
-              <div className="flex flex-col gap-3">
-                {currentDose.inputType === 'mcq' ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
-                    {currentDose.options.map((option, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => { setInputValue(option); setSubmitStatus('idle'); }}
-                        disabled={submitStatus === 'correct'}
-                        className={`px-4 py-3 rounded-xl border text-center text-[12px] font-bold transition-all ${
-                          inputValue === option ? 'bg-teal-600 border-teal-400 text-white' : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700'
-                        } ${submitStatus === 'correct' ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      >
-                        {option}
-                      </button>
-                    ))}
+
+              {submitStatus === 'incorrect' && !currentNode.isRemedial && (
+                <div className="bg-rose-500/10 border border-rose-500/40 rounded-xl p-4 mb-4 animate-in fade-in zoom-in duration-300">
+                  <div className="flex items-start gap-2 text-rose-200 text-[13px] text-left">
+                     <XCircle size={16} className="text-rose-400 shrink-0 mt-0.5" />
+                     <p>{currentNode.incorrectFeedback}</p>
                   </div>
-                ) : (
-                  <input
-                    type="text"
-                    value={inputValue}
-                    onChange={(e) => { setInputValue(e.target.value); setSubmitStatus('idle'); }}
-                    disabled={submitStatus === 'correct'}
-                    placeholder={currentDose.placeholder}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white text-[14px] placeholder-slate-500 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-all disabled:opacity-50"
-                    onKeyDown={(e) => {
-                      if(e.key === 'Enter' && inputValue.trim() !== '' && submitStatus !== 'correct') handleCheckAnswer();
-                      if(e.key === 'Enter' && submitStatus === 'correct') handleNext();
-                    }}
-                  />
-                )}
-                
-                {submitStatus === 'correct' ? (
-                  <button onClick={handleNext} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold bg-teal-500 text-white hover:bg-teal-400 shadow-lg shadow-teal-900/20 transition-all text-[14px]">
-                    {currentStep === linearProgramData.length - 1 ? 'Hoàn thành bài học' : 'Chuyển sang liều tiếp theo'} 
-                    <ArrowRight size={18} />
+                  <button 
+                    onClick={() => handleNextNode(currentNode.incorrectNext)}
+                    className="mt-3 w-full bg-rose-500/20 hover:bg-rose-500/40 text-rose-100 py-2 rounded-lg font-bold text-xs transition-colors flex items-center justify-center gap-2 border border-rose-500/30"
+                  >
+                    Đến nhánh phụ đạo <GitBranch size={14}/>
                   </button>
-                ) : (
-                  <button onClick={handleCheckAnswer} disabled={inputValue.trim() === ''} className={`w-full py-3 rounded-xl font-bold transition-all text-[14px] ${
-                    inputValue.trim() !== '' ? 'bg-amber-500 text-slate-900 hover:bg-amber-400 shadow-lg' : 'bg-slate-800 text-slate-600 cursor-not-allowed'
-                  }`}>Kiểm tra đáp án</button>
-                )}
-              </div>
+                </div>
+              )}
+
+              {submitStatus === 'correct' && !currentNode.isRemedial && (
+                <div className="bg-teal-500/10 border border-teal-500/40 rounded-xl p-4 mb-4 animate-in fade-in zoom-in duration-300">
+                  <div className="flex items-start gap-2 text-teal-200 text-[13px] text-left">
+                     <CheckCircle2 size={16} className="text-teal-400 shrink-0 mt-0.5" />
+                     <p>{currentNode.correctFeedback}</p>
+                  </div>
+                  <button 
+                    onClick={() => handleNextNode(currentNode.correctNext)}
+                    className="mt-3 w-full bg-teal-500 hover:bg-teal-400 text-white py-2 rounded-lg font-bold text-sm transition-colors flex items-center justify-center gap-2 shadow-lg shadow-teal-900/50"
+                  >
+                    Đi tiếp nhánh chính <ArrowRight size={16}/>
+                  </button>
+                </div>
+              )}
+
+              {currentNode.type === 'question' && submitStatus === 'idle' && (
+                <div className="flex flex-col gap-3">
+                  {currentNode.inputType === 'mcq' ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
+                      {currentNode.options.map((option, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => { setInputValue(option); }}
+                          className={`px-4 py-3 rounded-xl border text-center text-[13px] font-bold transition-all ${
+                            inputValue === option ? 'bg-indigo-600 border-indigo-400 text-white' : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700'
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      placeholder={currentNode.placeholder}
+                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white text-[14px] placeholder-slate-500 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all"
+                      onKeyDown={(e) => {
+                        if(e.key === 'Enter' && inputValue.trim() !== '') handleCheckAnswer();
+                      }}
+                    />
+                  )}
+                  
+                  <button 
+                    onClick={handleCheckAnswer} 
+                    disabled={inputValue.trim() === ''} 
+                    className={`w-full py-3 rounded-xl font-bold transition-all text-[14px] mt-2 ${
+                      inputValue.trim() !== '' ? 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-900/30' : 'bg-slate-800 text-slate-600 cursor-not-allowed'
+                    }`}
+                  >
+                    Xác nhận đáp án
+                  </button>
+                </div>
+              )}
+
+              {currentNode.isRemedial && (
+                <button 
+                  onClick={() => handleNextNode(currentNode.correctNext)}
+                  className="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 py-3 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2 shadow-lg shadow-amber-900/20"
+                >
+                  Đã hiểu! Quay lại nhánh chính <GitMerge size={16}/>
+                </button>
+              )}
+
             </div>
           </div>
         </div>
 
-        <div className="w-full md:w-7/12 bg-slate-50 p-6 md:p-10 flex items-center justify-center">
+        <div className="w-full md:w-7/12 bg-white p-6 md:p-10 flex items-center justify-center">
           {renderVisual()}
         </div>
       </div>
