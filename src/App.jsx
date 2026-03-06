@@ -5,7 +5,7 @@ const linearProgramData = [
   {
     id: 1,
     title: "Liều 1: Phân tích bài toán thực tế",
-    info: "Bác thợ mộc có một tấm bìa hình vuông cạnh 12 dm. Bác muốn cắt bỏ 4 hình vuông nhỏ ở 4 góc (mỗi cạnh là x dm) rồi gập các mép lên để tạo thành một chiếc hộp không nắp. Mục tiêu: Tìm x để hộp có thể tích lớn nhất.",
+    info: "Bác thợ mộc có một tấm ván gỗ hình vuông cạnh 12 dm. Bác muốn cắt bỏ 4 hình vuông nhỏ ở 4 góc (mỗi cạnh là x dm) rồi gập các mép lên để tạo thành một chiếc hộp không nắp. Mục tiêu: Tìm x để hộp có thể tích lớn nhất.",
     question: "Kích thước đáy của chiếc hộp sau khi gập lên sẽ là một hình vuông có cạnh bằng bao nhiêu?",
     inputType: "mcq",
     options: ["12 - x", "12 - 2x"],
