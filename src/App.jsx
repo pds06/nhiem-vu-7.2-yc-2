@@ -41,7 +41,7 @@ const linearProgramData = [
   {
     id: 4,
     title: "Liều 4: Sử dụng công cụ đạo hàm",
-    info: "Khai triển hàm số ta được: V(x) = 4x³ - 48x² + 144x. Để tìm cực trị, ta dùng công cụ mạnh nhất của Giải tích 12: đạo hàm.",
+    info: "Khai triển hàm số ta được: V(x) = 4x³ - 48x² + 144x.",
     question: "Đạo hàm V'(x) của hàm số trên là gì?",
     inputType: "mcq",
     options: ["V'(x) = 12x² - 96x + 144", "V'(x) = 4x² - 96x + 144"],
